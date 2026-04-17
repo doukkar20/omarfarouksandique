@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Default Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ===============================================================
+    // GLOBAL HELPERS
+    // ===============================================================
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email in ["doukkar@admin.com", "benaissa@admin.com", "doukkar2018@gmail.com"] ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function isValidDate(d) { return d is string && d.matches('^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$'); }
+
+    // ===============================================================
+    // COLLECTION VALIDATORS
+    // ===============================================================
+
+    function isValidUser(data) {
+      let required = ['email', 'name', 'lastLogin'];
+      return data.keys().hasAll(required) &&
+             data.email is string && data.email.size() < 256 &&
+             data.name is string && data.name.size() < 100 &&
+             isValidDate(data.lastLogin);
+    }
+
+    function isValidApartment(data) {
+      return data.keys().hasAll(['number', 'ownerName', 'phone']) &&
+             data.number is string && data.number.size() > 0 && data.number.size() <= 20 &&
+             data.ownerName is string && data.ownerName.size() > 0 && data.ownerName.size() <= 100 &&
+             data.phone is string && data.phone.size() <= 20;
+    }
+
+    function isValidReceipt(data) {
+      return data.keys().hasAll(['receiptNo', 'apartmentId', 'amount', 'date', 'hash', 'status']) &&
+             data.receiptNo is string && data.receiptNo.size() < 50 &&
+             data.amount is number && data.amount >= 0 &&
+             isValidDate(data.date) &&
+             data.hash is string && data.hash.size() < 128 &&
+             data.status in ['paid', 'unpaid'];
+    }
+
+    function isValidContent(data) {
+      return data.keys().hasAll(['type', 'title', 'details', 'createdAt', 'status']) &&
+             data.type in ['news', 'project'] &&
+             data.title is string && data.title.size() < 200 &&
+             data.details is string && data.details.size() < 10000 &&
+             isValidDate(data.createdAt);
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll(['category', 'amount', 'details', 'date']) &&
+             data.category is string &&
+             data.amount is number &&
+             isValidDate(data.date);
+    }
+
+    // ===============================================================
+    // RULES BY COLLECTION
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(incoming()) && !('role' in incoming());
+      allow update: if (isOwner(userId) && isValidUser(incoming()) && 
+                        incoming().diff(existing()).affectedKeys().hasOnly(['email', 'name', 'photoURL', 'lastLogin'])) ||
+                   isAdmin();
+    }
+
+    // Explicitly check for admins collection if used for role backup
+    match /admins/{userId} {
+      allow read: if isSignedIn();
+    }
+
+    match /apartments/{aptId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidApartment(incoming());
+    }
+
+    match /receipts/{receiptId} {
+      allow read: if true; // Public for QR verification
+      allow create: if isAdmin() && isValidReceipt(incoming());
+      allow update: if isAdmin() && isValidReceipt(incoming()) && 
+                      incoming().receiptNo == existing().receiptNo; // Immutable field
+      allow delete: if isAdmin();
+    }
+
+    match /content/{contentId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidContent(incoming());
+      allow update: if isAdmin() && isValidContent(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidExpense(incoming());
+    }
+
+    match /feedback/{fbId} {
+      allow read: if isAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
+      allow create: if isSignedIn() && 
+                      incoming().status == 'pending' &&
+                      (!('userId' in incoming()) || incoming().userId == request.auth.uid);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /notifications/{notifId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

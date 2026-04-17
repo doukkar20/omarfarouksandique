@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #02040a;
+  --color-card: #0c0e14;
+  --color-card-hover: #12151e;
+  --color-accent-gold: #D4AF37;
+  --color-accent-gold-light: #E5C365;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-success: #10b981;
+  --color-whatsapp: #25d366;
+  --color-border: #1e293b;
+  --color-border-active: #334155;
+
+  --font-sans: "Inter", "Segoe UI", "Tahoma", "Verdana", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary antialiased selection:bg-accent-gold/30;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent-gold text-background px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-accent-gold/10 hover:bg-accent-gold-light active:scale-95 transition-all duration-200 cursor-pointer;
+  }
+  
+  .btn-whatsapp {
+    @apply bg-whatsapp/10 text-whatsapp border border-whatsapp/20 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-whatsapp hover:text-white transition-all duration-200;
+  }
+
+  .card-base {
+    @apply bg-card border border-border rounded-2xl shadow-sm transition-all duration-300;
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/5;
+  }
+
+  .scroll-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

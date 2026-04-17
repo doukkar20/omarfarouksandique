@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "Apartment": {
+      "title": "Apartment",
+      "description": "Information about a specific apartment and its owner.",
+      "type": "object",
+      "properties": {
+        "number": { "type": "string", "description": "Apartment number (e.g., 1, 2A)" },
+        "ownerName": { "type": "string", "description": "Full name of the owner" },
+        "phone": { "type": "string", "description": "WhatsApp phone number" }
+      },
+      "required": ["number", "ownerName", "phone"]
+    },
+    "Receipt": {
+      "title": "Receipt",
+      "description": "Payment receipt for building fees.",
+      "type": "object",
+      "properties": {
+        "receiptNo": { "type": "string", "description": "Unique receipt number (e.g., 2026_0011)" },
+        "apartmentId": { "type": "string", "description": "Reference to the apartment document ID" },
+        "amount": { "type": "number", "description": "Amount paid" },
+        "date": { "type": "string", "format": "date-time", "description": "Payment date" },
+        "hash": { "type": "string", "description": "Unique verification hash" },
+        "status": { "type": "string", "enum": ["paid", "unpaid"], "description": "Payment status" }
+      },
+      "required": ["receiptNo", "apartmentId", "amount", "date", "hash", "status"]
+    },
+    "Content": {
+      "title": "Content",
+      "description": "News or upcoming projects for the building.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["news", "project"], "description": "Type of content" },
+        "title": { "type": "string", "description": "Title of the item" },
+        "details": { "type": "string", "description": "Detailed description" },
+        "imageUrl": { "type": "string", "description": "URL of the associated image" },
+        "status": { "type": "string", "enum": ["in-progress", "completed"], "description": "Status for projects" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation date" }
+      },
+      "required": ["type", "title", "details", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "System user (admin/syndic).",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin"] }
+      },
+      "required": ["email", "role"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "A record of a building expense (e.g., electricity, repairs).",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "Category of the expense (e.g., Maintenance, Utilities)" },
+        "amount": { "type": "number", "description": "Amount spent" },
+        "details": { "type": "string", "description": "Additional details about the expense" },
+        "date": { "type": "string", "format": "date-time", "description": "Date of the expense" }
+      },
+      "required": ["category", "amount", "details", "date"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "User reported issues or general feedback.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who submitted the feedback" },
+        "userEmail": { "type": "string", "description": "Email of the user who submitted the feedback" },
+        "type": { "type": "string", "enum": ["bug", "feedback", "maintenance"], "description": "Category of the report" },
+        "description": { "type": "string", "description": "Main description of the issue" },
+        "screenshotUrl": { "type": "string", "description": "Optional URL to an attached screenshot" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission date" },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "resolved"], "description": "Status of the report" }
+      },
+      "required": ["type", "description", "createdAt", "status"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Global announcements pushed to all users.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Subject of the notification" },
+        "body": { "type": "string", "description": "Message content" },
+        "type": { "type": "string", "enum": ["info", "alert", "update"], "description": "Severity type" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When it was sent" },
+        "sentBy": { "type": "string", "description": "Email or ID of the admin who sent it" }
+      },
+      "required": ["title", "body", "type", "createdAt", "sentBy"]
+    }
+  },
+  "firestore": {
+    "/apartments/{apartmentId}": {
+      "schema": "Apartment",
+      "description": "List of apartments in the building."
+    },
+    "/receipts/{receiptId}": {
+      "schema": "Receipt",
+      "description": "Issued payment receipts."
+    },
+    "/content/{contentId}": {
+      "schema": "Content",
+      "description": "Building news and projects."
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Admin users."
+    },
+    "/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Records of building maintenance and operational expenses."
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "General application feedback and bug reports."
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Global push notifications/announcements."
+    }
+  }
+}

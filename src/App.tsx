@@ -842,26 +842,26 @@ export default function App() {
 
         {/* Sidebar */}
         <aside className={cn(
-          "lg:w-72 bg-card border-l border-border p-8 flex flex-col fixed lg:relative inset-y-0 right-0 z-50 transition-all duration-300 ease-in-out",
-          isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none"
+          "lg:w-80 glass border-l p-8 flex flex-col fixed lg:relative inset-y-0 right-0 z-50 transition-all duration-500 ease-in-out shadow-2xl lg:shadow-none",
+          isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
         )}>
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent-gold flex items-center justify-center shadow-lg shadow-accent-gold/20">
-                <Building2 className="text-background" size={24} />
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-4 group">
+              <div className="w-12 h-12 rounded-2xl bg-accent-gold flex items-center justify-center shadow-lg shadow-accent-gold/20 rotate-3 group-hover:rotate-12 transition-transform duration-500">
+                <Building2 className="text-black" size={24} />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tighter text-text-primary leading-none">سانديك</span>
-                <span className="text-xs font-bold text-accent-gold uppercase tracking-[3px] mt-1">الفاروق</span>
+                <span className="text-xl font-display font-black tracking-tight text-white leading-none">الفاروق</span>
+                <span className="text-[10px] uppercase font-black text-accent-gold tracking-[0.3em] mt-1.5 opacity-70">SYNDIC PLATINUM</span>
               </div>
             </div>
-            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-text-secondary p-2 hover:bg-white/5 rounded-lg transition-colors">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 p-2 hover:bg-white/5 rounded-xl transition-colors">
               <X size={24} />
             </button>
           </div>
 
           <nav className="flex-1 overflow-y-auto scroll-hide">
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               <SidebarItem 
                 icon={<LayoutDashboard size={20} />} 
                 label="لوحة التحكم" 
@@ -910,6 +910,9 @@ export default function App() {
               />
               {isAdmin && (
                 <>
+                  <div className="pt-6 pb-2 px-4">
+                    <span className="text-[10px] font-black uppercase tracking-[3px] text-gray-500">الإدارة العليا</span>
+                  </div>
                   <SidebarItem 
                     icon={<MessageSquare size={20} />} 
                     label="البلاغات والآراء" 
@@ -928,13 +931,13 @@ export default function App() {
             </ul>
           </nav>
 
-          <div className="mt-8 space-y-3">
+          <div className="mt-auto pt-8 space-y-4">
             {isAdmin && (
               <motion.button 
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(212,175,55,0.15)' }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setIsBroadcastModalOpen(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-accent-gold/10 text-accent-gold hover:bg-accent-gold/20 transition-all text-sm font-bold border border-accent-gold/20 group"
+                className="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-2xl bg-accent-gold/10 text-accent-gold transition-all text-[11px] font-black uppercase tracking-widest border border-accent-gold/20 group"
               >
                 <Volume2 size={18} className="group-hover:scale-110 transition-transform" />
                 <span>إرسال إشعار عاجل</span>
@@ -943,31 +946,37 @@ export default function App() {
             
             {user && (
               <motion.button 
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(239,68,68,0.1)' }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setIsFeedbackModalOpen(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all text-sm font-bold border border-red-500/10 group"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-red-500/5 text-red-400 hover:text-red-400 transition-all text-[11px] font-black uppercase tracking-widest border border-red-500/10 group"
               >
                 <AlertCircle size={18} className="group-hover:rotate-12 transition-transform" />
                 <span>بلغ عن مشكلة</span>
               </motion.button>
             )}
             
-            <div className="p-4 rounded-2xl bg-white/5 border border-border">
+            <div className="p-5 glass-dark rounded-[2rem] border border-white/[0.03] shadow-2xl">
               {user ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold text-xs font-bold">
-                      {user.email?.[0].toUpperCase()}
+                <div className="space-y-5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-gold to-accent-gold-light p-[1px] shadow-lg shadow-accent-gold/10">
+                      <div className="w-full h-full rounded-[15px] bg-background flex items-center justify-center overflow-hidden">
+                        {user.photoURL ? (
+                          <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-accent-gold text-lg font-black">{user.email?.[0].toUpperCase()}</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[10px] font-bold text-text-secondary uppercase">المشرف</span>
-                      <span className="text-[11px] text-text-primary truncate font-medium">{user.email}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] font-black text-accent-gold uppercase tracking-[2px] opacity-70 mb-0.5">{isAdmin ? 'مسؤول النظام' : 'ساكن / مشترك'}</span>
+                      <span className="text-sm text-white truncate font-bold">{user.email?.split('@')[0]}</span>
                     </div>
                   </div>
                   <button 
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold text-red-500/80 hover:text-red-500 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/5 text-red-500 hover:bg-red-500/10 transition-all text-[10px] font-black uppercase tracking-[3px]"
                   >
                     <LogOut size={14} />
                     تسجيل الخروج
@@ -976,17 +985,18 @@ export default function App() {
               ) : (
                 <button 
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="w-full btn-primary text-xs py-2.5"
+                  className="w-full btn-primary py-4 shadow-2xl shadow-accent-gold/20"
                 >
-                  دخول السانديك
+                  <ShieldCheck size={20} />
+                  <span className="uppercase tracking-widest text-[11px] font-black">دخول المسؤول</span>
                 </button>
               )}
             </div>
-            <div className="flex items-center justify-between px-2">
-              <span className="text-[9px] text-text-secondary font-mono tracking-widest opacity-50 uppercase">Verify-ID v1.0.4</span>
-              <div className="flex gap-1">
-                <div className="w-1 h-1 rounded-full bg-success animate-pulse" />
-                <div className="w-1 h-1 rounded-full bg-success animate-pulse delay-100" />
+            <div className="flex items-center justify-between px-4 pb-2">
+              <span className="text-[9px] text-text-secondary font-mono tracking-[4px] opacity-30 uppercase font-black">PLATINUM v1.2</span>
+              <div className="flex gap-1.5 items-center">
+                <span className="w-1 h-1 rounded-full bg-success animate-pulse" />
+                <span className="text-[8px] font-black text-success uppercase tracking-widest opacity-80">Online</span>
               </div>
             </div>
           </div>
@@ -1004,66 +1014,76 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-10 flex flex-col gap-8 overflow-y-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h1 className="text-2xl lg:text-3xl font-bold">
-              {activeTab === 'dashboard' && "إدارة الملاك والمدفوعات"}
-              {activeTab === 'apartments' && "إدارة الشقق"}
-              {activeTab === 'receipts' && "سجل الإيصالات"}
-              {activeTab === 'content' && "الأخبار والمشاريع"}
-              {activeTab === 'expenses' && "سجل المصاريف العامة"}
-              {activeTab === 'verify' && "التحقق من الإيصالات"}
-              {activeTab === 'guide' && "دليل الاستخدام"}
-              {activeTab === 'feedback' && "بلاغات الأخطاء والملاحظات"}
-              {activeTab === 'overdue' && "الملاك المتأخرون عن الأداء"}
-            </h1>
-            {activeTab === 'receipts' && isAdmin && (
-              <button onClick={() => {
-                setReceiptApartmentId('');
-                setReceiptAmount(100);
-                setIsReceiptModalOpen(true);
-              }} className="btn-primary flex items-center gap-2">
-                <Plus size={18} />
-                إيصال جديد
-              </button>
-            )}
-            {activeTab === 'apartments' && isAdmin && (
-              <button onClick={() => {
-                setAptNumber('');
-                setAptOwner('');
-                setAptPhone('');
-                setIsApartmentModalOpen(true);
-              }} className="btn-primary flex items-center gap-2">
-                <Plus size={18} />
-                إضافة شقة
-              </button>
-            )}
-            {activeTab === 'expenses' && isAdmin && (
-              <button onClick={() => {
-                setExpenseCategory('');
-                setExpenseAmount(0);
-                setExpenseDetails('');
-                setIsExpenseModalOpen(true);
-              }} className="btn-primary flex items-center gap-2">
-                <Plus size={18} />
-                إضافة مصروف
-              </button>
-            )}
-            {activeTab === 'content' && isAdmin && (
-              <button onClick={() => {
-                setEditingContentId(null);
-                setContentTitle('');
-                setContentDetails('');
-                setContentType('news');
-                setContentImageUrl('');
-                setContentStatus('pending');
-                setContentProgress(0);
-                setIsContentModalOpen(true);
-              }} className="btn-primary flex items-center gap-2">
-                <Plus size={18} />
-                إضافة محتوى
-              </button>
-            )}
+        <main className="flex-1 p-6 lg:p-12 flex flex-col gap-10 overflow-y-auto relative">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-gold/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-1">
+              <h1 className="text-3xl lg:text-5xl font-display font-black tracking-tight text-white">
+                {activeTab === 'dashboard' && "لوحة التحكم"}
+                {activeTab === 'apartments' && "سجل الشقق والملاك"}
+                {activeTab === 'receipts' && "الأداءات المالية"}
+                {activeTab === 'content' && "الأخبار والمشاريع"}
+                {activeTab === 'expenses' && "الوضعية المالية"}
+                {activeTab === 'verify' && "التحقق الرقمي"}
+                {activeTab === 'guide' && "دليل الاستخدام"}
+                {activeTab === 'feedback' && "مركز المساعدة"}
+                {activeTab === 'overdue' && "قائمة المتأخرات"}
+              </h1>
+              <p className="text-text-secondary text-sm font-medium tracking-wide">
+                نظام الإدارة الرقمية لعمارة عمر الفاروق
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              {activeTab === 'receipts' && isAdmin && (
+                <button onClick={() => {
+                  setReceiptApartmentId('');
+                  setReceiptAmount(100);
+                  setIsReceiptModalOpen(true);
+                }} className="btn-primary">
+                  <Plus size={18} />
+                  <span>إيصال جديد</span>
+                </button>
+              )}
+              {activeTab === 'apartments' && isAdmin && (
+                <button onClick={() => {
+                  setAptNumber('');
+                  setAptOwner('');
+                  setAptPhone('');
+                  setIsApartmentModalOpen(true);
+                }} className="btn-primary flex items-center gap-2">
+                  <Plus size={18} />
+                  إضافة شقة
+                </button>
+              )}
+              {activeTab === 'expenses' && isAdmin && (
+                <button onClick={() => {
+                  setExpenseCategory('');
+                  setExpenseAmount(0);
+                  setExpenseDetails('');
+                  setIsExpenseModalOpen(true);
+                }} className="btn-primary flex items-center gap-2">
+                  <Plus size={18} />
+                  إضافة مصروف
+                </button>
+              )}
+              {activeTab === 'content' && isAdmin && (
+                <button onClick={() => {
+                  setEditingContentId(null);
+                  setContentTitle('');
+                  setContentDetails('');
+                  setContentType('news');
+                  setContentImageUrl('');
+                  setContentStatus('pending');
+                  setContentProgress(0);
+                  setIsContentModalOpen(true);
+                }} className="btn-primary flex items-center gap-2">
+                  <Plus size={18} />
+                  إضافة محتوى
+                </button>
+              )}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -1075,14 +1095,42 @@ export default function App() {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <StatCard 
-                    title="الرصيد الصافي" 
-                    value={`${totalIncome - totalExpenses} د.م.`} 
-                    icon={<BarChart3 size={20} />} 
-                    isGold 
-                    trend={`+${((totalIncome - totalExpenses) / (totalIncome || 1) * 100).toFixed(0)}%`}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10 dashboard-bento">
+                  <div className="lg:col-span-2 lg:row-span-2">
+                    <div className="card-premium h-full flex flex-col justify-between overflow-hidden relative group">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-accent-gold/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                      <div>
+                        <div className="flex items-center justify-between mb-8">
+                          <div className="w-12 h-12 rounded-2xl bg-accent-gold/10 flex items-center justify-center text-accent-gold">
+                            <BarChart3 size={24} />
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-[3px] text-accent-gold bg-accent-gold/10 py-1.5 px-3 rounded-full">الوضعية المالية</span>
+                        </div>
+                        <h3 className="text-text-secondary font-medium tracking-wide mb-2 uppercase text-xs">الرصيد الصافي المتوفر</h3>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-6xl font-display font-black text-white tracking-tighter">{totalIncome - totalExpenses}</span>
+                          <span className="text-xl font-bold text-accent-gold">د.م.</span>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-12 space-y-6 relative z-10">
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-end">
+                            <span className="text-xs font-bold text-text-secondary uppercase">نسبة السيولة من المداخيل</span>
+                            <span className="text-lg font-black text-accent-gold">{((totalIncome - totalExpenses) / (totalIncome || 1) * 100).toFixed(0)}%</span>
+                          </div>
+                          <div className="h-4 bg-white/5 rounded-full p-1 border border-white/5 overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${((totalIncome - totalExpenses) / (totalIncome || 1) * 100)}%` }}
+                              className="h-full bg-accent-gold rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <StatCard 
                     title="إجمالي المداخيل" 
                     value={`${totalIncome} د.م.`} 
@@ -3233,23 +3281,31 @@ function SidebarItem({ icon, label, active, onClick, badge }: { icon: React.Reac
       <button
         onClick={onClick}
         className={cn(
-          "w-full flex items-center justify-between group py-3.5 px-4 rounded-xl text-sm transition-all duration-300",
+          "w-full flex items-center justify-between group py-3 px-4 rounded-xl text-sm transition-all duration-300 relative overflow-hidden",
           active 
-            ? "bg-accent-gold/10 text-accent-gold font-bold shadow-sm" 
-            : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
+            ? "bg-accent-gold/10 text-accent-gold font-bold" 
+            : "text-gray-400 hover:bg-white/[0.04] hover:text-white"
         )}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 relative z-10">
           <span className={cn(
-            "transition-transform duration-300 group-hover:scale-110",
-            active ? "text-accent-gold" : "opacity-70"
+            "transition-all duration-300",
+            active ? "scale-110 text-accent-gold" : "opacity-50 group-hover:opacity-100 group-hover:scale-110"
           )}>{icon}</span>
           <span className="tracking-tight">{label}</span>
         </div>
+        
+        {active && (
+          <motion.div 
+            layoutId="active-pill"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-accent-gold rounded-full"
+          />
+        )}
+
         {badge !== undefined && (
           <span className={cn(
-            "text-[10px] px-1.5 py-0.5 rounded-md font-bold",
-            active ? "bg-accent-gold text-background" : "bg-white/10 text-text-secondary"
+            "relative z-10 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[9px] font-black",
+            active ? "bg-accent-gold text-black" : "bg-red-500 text-white"
           )}>
             {badge}
           </span>

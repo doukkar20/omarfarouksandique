@@ -446,18 +446,25 @@ export default function App() {
 
     // Notifications (Push simulation)
     const unsubNotifications = onSnapshot(query(collection(db, 'notifications'), orderBy('createdAt', 'desc')), (snapshot) => {
-      const newNotifs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
-      setNotifications(newNotifs);
+      const now = new Date();
+      const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+      
+      const allNotifs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
+      const filteredNotifs = allNotifs.filter(n => n.createdAt >= dayAgo);
+      
+      setNotifications(filteredNotifs);
       
       // If we've already loaded initial data, identify added ones and show toast
       if (initialLoadComplete) {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'added') {
             const addedNotif = { id: change.doc.id, ...change.doc.data() } as AppNotification;
-            setActiveToast(addedNotif);
-            // Play a subtle sound if possible or just show toast
-            // Auto close toast after 8 seconds
-            setTimeout(() => setActiveToast(null), 8000);
+            // Only show toast if it's within the 24h window
+            if (addedNotif.createdAt >= dayAgo) {
+              setActiveToast(addedNotif);
+              // Auto close toast after 8 seconds
+              setTimeout(() => setActiveToast(null), 8000);
+            }
           }
         });
       }

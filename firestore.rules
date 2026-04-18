@@ -13,16 +13,16 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
     function isAdmin() { 
       return isSignedIn() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
         request.auth.token.email in ["doukkar@admin.com", "benaissa@admin.com", "doukkar2018@gmail.com"] ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin")
       );
     }
     function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
     function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-    function isValidDate(d) { return d is string && d.matches('^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$'); }
+    function isValidDate(d) { return d is string && d.size() >= 20; }
 
     // ===============================================================
     // COLLECTION VALIDATORS
@@ -55,8 +55,9 @@ service cloud.firestore {
     function isValidContent(data) {
       return data.keys().hasAll(['type', 'title', 'details', 'createdAt', 'status']) &&
              data.type in ['news', 'project'] &&
-             data.title is string && data.title.size() < 200 &&
-             data.details is string && data.details.size() < 10000 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.details is string && data.details.size() <= 10000 &&
+             data.status in ['pending', 'completed'] &&
              isValidDate(data.createdAt);
     }
 

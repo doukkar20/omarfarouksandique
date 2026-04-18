@@ -34,7 +34,7 @@
         "title": { "type": "string", "description": "Title of the item" },
         "details": { "type": "string", "description": "Detailed description" },
         "imageUrl": { "type": "string", "description": "URL of the associated image" },
-        "status": { "type": "string", "enum": ["in-progress", "completed"], "description": "Status for projects" },
+        "status": { "type": "string", "enum": ["pending", "completed"], "description": "Status for projects" },
         "createdAt": { "type": "string", "format": "date-time", "description": "Creation date" }
       },
       "required": ["type", "title", "details", "createdAt"]

@@ -45,6 +45,7 @@ import {
   Menu,
   X,
   Building2,
+  Home,
   Calendar,
   ShieldCheck,
   ArrowRight,
@@ -1414,7 +1415,14 @@ export default function App() {
                     <tbody className="divide-y divide-border">
                       {apartments.map(apt => (
                         <tr key={apt.id} className="hover:bg-white/5 transition-colors">
-                          <td className="px-6 py-4 font-bold">{apt.number}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-accent-gold/10 flex items-center justify-center text-accent-gold">
+                                <Home size={16} />
+                              </div>
+                              <span className="font-bold">{apt.number}</span>
+                            </div>
+                          </td>
                           <td className="px-6 py-4 text-text-secondary">{apt.ownerName}</td>
                           <td className="px-6 py-4 text-text-secondary" dir="ltr">{apt.phone}</td>
                           <td className="px-6 py-4">

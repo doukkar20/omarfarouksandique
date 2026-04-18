@@ -87,7 +87,8 @@ service cloud.firestore {
 
     match /apartments/{aptId} {
       allow read: if true;
-      allow write: if isAdmin() && isValidApartment(incoming());
+      allow create, update: if isAdmin() && isValidApartment(incoming());
+      allow delete: if isAdmin();
     }
 
     match /receipts/{receiptId} {
@@ -107,7 +108,8 @@ service cloud.firestore {
 
     match /expenses/{expenseId} {
       allow read: if true;
-      allow write: if isAdmin() && isValidExpense(incoming());
+      allow create, update: if isAdmin() && isValidExpense(incoming());
+      allow delete: if isAdmin();
     }
 
     match /feedback/{fbId} {

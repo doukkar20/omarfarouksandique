@@ -46,6 +46,8 @@ import {
   X,
   Building2,
   Home,
+  User as UserIcon,
+  Phone,
   Calendar,
   ShieldCheck,
   ArrowRight,
@@ -1397,77 +1399,106 @@ export default function App() {
                 )}
 
                 {/* All Apartments Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-8 bg-accent-gold rounded-full" />
-                    <h2 className="text-xl font-bold">كافة سجلات الشقق</h2>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-8 bg-accent-gold rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]" />
+                      <h2 className="text-xl font-bold tracking-tight">كافة سجلات الشقق</h2>
+                    </div>
+                    <div className="text-xs font-black text-text-secondary uppercase tracking-[3px] bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                      {apartments.length} شقة مسجلة
+                    </div>
                   </div>
-                  <div className="card-base overflow-hidden">
-                  <table className="w-full text-right">
-                    <thead className="bg-white/3">
-                      <tr>
-                        <th className="px-6 py-4 text-xs font-medium text-text-secondary">رقم الشقة</th>
-                        <th className="px-6 py-4 text-xs font-medium text-text-secondary">المالك</th>
-                        <th className="px-6 py-4 text-xs font-medium text-text-secondary">رقم الهاتف</th>
-                        <th className="px-6 py-4 text-xs font-medium text-text-secondary">الإجراءات</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {apartments.map(apt => (
-                        <tr key={apt.id} className="hover:bg-white/5 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-accent-gold/10 flex items-center justify-center text-accent-gold">
-                                <Home size={16} />
-                              </div>
-                              <span className="font-bold">{apt.number}</span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {apartments.map((apt, idx) => (
+                      <motion.div 
+                        key={apt.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="card-base group overflow-hidden flex flex-col hover:border-accent-gold/40 transition-all duration-500 relative"
+                      >
+                        <div className="p-6">
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="w-12 h-12 rounded-2xl bg-accent-gold/10 flex items-center justify-center text-accent-gold group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-accent-gold/5">
+                              <Home size={24} />
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-text-secondary">{apt.ownerName}</td>
-                          <td className="px-6 py-4 text-text-secondary" dir="ltr">{apt.phone}</td>
-                          <td className="px-6 py-4">
-                            {isAdmin && (
-                              <div className="flex items-center gap-4">
-                                <button 
-                                  onClick={() => {
-                                    setReceiptApartmentId(apt.id);
-                                    setReceiptAmount(100);
-                                    setIsReceiptModalOpen(true);
-                                  }}
-                                  className="text-accent-gold text-xs font-bold hover:underline"
-                                >
-                                  إصدار إيصال
-                                </button>
-                                <button 
-                                  onClick={() => {
-                                    requestConfirmation(
-                                      'حذف بيانات الشقة',
-                                      `تنبيه: أنت على وشك حذف الشقة رقم ${apt.number}. سيتم حذف جميع البيانات المرتبطة بها نهائياً. يرجى كتابة رقم الشقة "${apt.number}" للتأكيد.`,
-                                      async () => {
-                                        try {
-                                          await deleteDoc(doc(db, 'apartments', apt.id));
-                                        } catch (err) {
-                                          handleFirestoreError(err, OperationType.DELETE, 'apartments');
-                                        }
-                                      },
-                                      'danger',
-                                      apt.number
-                                    );
-                                  }}
-                                  className="text-red-500 hover:text-red-400 transition-colors"
-                                  title="حذف الشقة"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
+                            <div className="text-right">
+                              <span className="text-[10px] font-black text-text-secondary uppercase tracking-[2px] block mb-1">رقم الشقة</span>
+                              <span className="text-2xl font-black text-white">{apt.number}</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/3 border border-white/3 group-hover:border-accent-gold/10 transition-colors">
+                              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary">
+                                <UserIcon size={16} />
                               </div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[9px] font-black text-text-secondary uppercase tracking-wider block">اسم المالك</span>
+                                <span className="text-sm font-bold text-text-primary block truncate">{apt.ownerName}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/3 border border-white/3 group-hover:border-accent-gold/10 transition-colors">
+                              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-text-secondary">
+                                <Phone size={16} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[9px] font-black text-text-secondary uppercase tracking-wider block">رقم الهاتف</span>
+                                <span className="text-sm font-bold text-text-primary block truncate" dir="ltr">{apt.phone}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto p-4 bg-white/3 border-t border-white/5 flex items-center justify-between gap-3">
+                          {isAdmin ? (
+                            <>
+                              <button 
+                                onClick={() => {
+                                  setReceiptApartmentId(apt.id);
+                                  setReceiptAmount(100);
+                                  setIsReceiptModalOpen(true);
+                                }}
+                                className="flex-1 py-2.5 rounded-xl bg-accent-gold text-background text-xs font-black uppercase tracking-wider hover:bg-accent-gold/90 transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-accent-gold/20"
+                              >
+                                {isAdmin && <Plus size={14} className="mb-0.5" />}
+                                إصدار إيصال
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  requestConfirmation(
+                                    'حذف بيانات الشقة',
+                                    `تنبيه: أنت على وشك حذف الشقة رقم ${apt.number}. سيتم حذف جميع البيانات المرتبطة بها نهائياً. يرجى كتابة رقم الشقة "${apt.number}" للتأكيد.`,
+                                    async () => {
+                                      try {
+                                        await deleteDoc(doc(db, 'apartments', apt.id));
+                                      } catch (err) {
+                                        handleFirestoreError(err, OperationType.DELETE, 'apartments');
+                                      }
+                                    },
+                                    'danger',
+                                    apt.number
+                                  );
+                                }}
+                                className="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center border border-red-500/20"
+                                title="حذف الشقة"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </>
+                          ) : (
+                            <div className="w-full text-center py-2 text-[10px] font-bold text-text-secondary uppercase tracking-[2px]">
+                              عرض السجل فقط
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
-              </div>
             </motion.div>
           )}
 
